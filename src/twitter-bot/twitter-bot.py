@@ -11,6 +11,7 @@ load_dotenv(os.path.join(os.pardir, ".env"))
 
 # creates a logger
 logger = logging.getLogger()
+
 class TwitterBot:
     """A twitter bot that will post tweets generated from a Markov model of languages based on character frequencies in text."""
 
@@ -51,3 +52,23 @@ class TwitterBot:
         logger.info("API created")
 
         return twitter_api 
+
+
+        
+    def send_tweet(twitter_api, tweet_text):
+
+        # pseduo flag
+        success = False
+        
+        # tries to send tweet
+        try:
+            twitter_api.update_status(tweet_text)
+            success = True
+        except Exception as e:
+            logger.error("Error tweeting tweet", exc_info=False) 
+            raise e
+
+        logger.info("Tweet sent")    
+
+        return success
+
