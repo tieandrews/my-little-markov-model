@@ -10,10 +10,11 @@ class Corpus:
         corpus_name : str
             The name for which to refer to the given corpus.
         """
+        if type(corpus_name) != str:
+            raise TypeError(f"Corpus name must be of type str, got {type(corpus_name)}")
 
         self.name = corpus_name
         self.raw_text = None
-        self.start_prompts = None
 
     def load_corpus(self):
         """Loads in the raw corpus from the raw data folder by model name.
@@ -21,9 +22,11 @@ class Corpus:
         Looks in data/raw/corpuses/{model_name}.
         """
 
-        corpus_path = os.path.join(
-            os.getcwd(), os.pardir, "data", "raw", "corpuses", self.name
-        )
+        cur_dir = os.getcwd()
+        src_path = cur_dir[
+            : cur_dir.index("my-little-markov-model") + len("my-little-markov-model")
+        ]
+        corpus_path = os.path.join(src_path, "data", "raw", "corpuses", self.name)
 
         for file in os.listdir(corpus_path):
             # Check whether file is in text format or not
