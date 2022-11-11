@@ -211,7 +211,7 @@ class MarkovModel:
 
         return string.replace("@", "\n")
 
-    def generate_start_prompts(self, corpus, num_sentences=100):
+    def generate_start_prompts(self, corpus, num_sentences=100, min_char_count=100):
         """Gets sentences for which the starts of will be used when generating new text.
 
         Parameters
@@ -221,15 +221,25 @@ class MarkovModel:
         num_sentences : int, optional
             How many sentences to extract and store for use while generating. The more
             sentence options, the more varied the text will be, by default 100
+        min_char_count: int, optional
+            How long a valid string should be to be considered a valid prompt, can
+            reject intros/ chapter titles etc.
         """
 
         raw_sentences = corpus.split(".")
+
+        # if song lyrics, not many periods, split by encoded new line character instead
+        # reduce minimum number of characters as well
+        if len(raw_sentences) < (1.5 * num_sentences):
+            raw_sentences = corpus.split("@")
+            min_char_count = 30
+
         verified_sentences = []
         sentence_index = 0
 
         while len(verified_sentences) < num_sentences:
 
-            if len(raw_sentences[sentence_index]) > 100:
+            if len(raw_sentences[sentence_index]) > min_char_count:
 
                 verified_sentences.append(raw_sentences[sentence_index])
 
