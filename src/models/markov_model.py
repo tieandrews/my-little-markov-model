@@ -4,6 +4,11 @@ import numpy as np
 from collections import defaultdict, Counter
 import pickle
 
+cur_dir = os.getcwd()
+SRC_PATH = cur_dir[
+    : cur_dir.index("my-little-markov-model") + len("my-little-markov-model")
+]
+
 
 class MarkovModel:
     def __init__(self):
@@ -95,7 +100,7 @@ class MarkovModel:
         }
 
         model_directory_path = os.path.join(
-            os.getcwd(), os.pardir, "models", "markov-models", self.model_name
+            SRC_PATH, "models", "markov-models", self.model_name
         )
 
         if not os.path.isdir(model_directory_path):
@@ -120,7 +125,7 @@ class MarkovModel:
 
         file_name = f"{model_name}_{n}-ngrams.pkl"
         model_path = os.path.join(
-            os.getcwd(), os.pardir, "models", "markov-models", model_name, file_name
+            SRC_PATH, "models", "markov-models", model_name, file_name
         )
 
         if not os.path.exists(model_path):
@@ -144,8 +149,9 @@ class MarkovModel:
         model_name : str
             Which model name to read in from models/markov-models directpry
         """
+
         model_path = os.path.join(
-            os.getcwd(), os.pardir, "models", "markov-models", model_name, "prod-model"
+            SRC_PATH, "models", "markov-models", model_name, "prod-model"
         )
         prod_model_files = os.listdir(model_path)
         if (not os.path.exists(model_path)) | (len(prod_model_files) == 0):
