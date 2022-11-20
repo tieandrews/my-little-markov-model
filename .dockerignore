@@ -1,0 +1,24 @@
+secrets
+.envrc
+.envrc*
+.direnv
+Dockerfile
+README.md
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+/**/__pycache__
+.pytest_cache
+
+# exclude test_model_files
+/models/markov-models/*
+!/models/markov-models/prod-models/
+
+# non required required files/folders
+/data
+/reports
+/references
+/tests
+/docs
+
