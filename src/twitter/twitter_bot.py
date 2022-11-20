@@ -4,16 +4,16 @@ import os
 from dotenv import load_dotenv
 import logging
 
-cur_dir = os.getcwd()
-SRC_PATH = cur_dir[
-    : cur_dir.index("my-little-markov-model") + len("my-little-markov-model")
-]
+# cur_dir = os.getcwd()
+# SRC_PATH = cur_dir[
+#     : cur_dir.index("my-little-markov-model") + len("my-little-markov-model")
+# ]
 # searches for .env file path
-load_dotenv(os.path.join(SRC_PATH, ".env"))
+load_dotenv(os.path.join(os.getcwd(), ".env"))
 
 
 # creates a logger
-logger = logging.getLogger()
+logger = logging.getLogger("markov-model")
 
 
 class TwitterBot:
