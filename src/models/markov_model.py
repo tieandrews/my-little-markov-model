@@ -3,11 +3,23 @@ import os
 import numpy as np
 from collections import defaultdict, Counter
 import pickle
+import logging
 
 cur_dir = os.getcwd()
-SRC_PATH = cur_dir[
-    : cur_dir.index("my-little-markov-model") + len("my-little-markov-model")
-]
+
+logger = logging.getLogger("markov-model")
+
+
+try:
+    SRC_PATH = cur_dir[
+        : cur_dir.index("my-little-markov-model") + len("my-little-markov-model")
+    ]
+except ValueError as e:
+    logger.info(
+        "ValueError: No parent directory by name my-little-markov-model, assumed to be running in container. "
+        "Setting src path to code/my-little-markov-model"
+    )
+    SRC_PATH = "code/my-little-markov-model"
 
 
 class MarkovModel:
@@ -51,7 +63,7 @@ class MarkovModel:
                 self.load_model_weights(self.model_name, self.n)
                 return
             except FileNotFoundError as e:
-                print(
+                logger.error(
                     f"Didn't find existing model weights for {self.model_name}, n = {self.n}. Training now..."
                 )
                 pass
@@ -78,7 +90,7 @@ class MarkovModel:
                 key: value / sum_occurences for key, value in ngram_dict[ngram].items()
             }
 
-        print(
+        logger.info(
             f"No of ngrams <3 occurences: {less_than_3}, total n_grams: {len(ngram_dict)}, percent: {less_than_3/len(ngram_dict)*100:.2f}%"
         )
 
@@ -130,7 +142,7 @@ class MarkovModel:
 
         if not os.path.exists(model_path):
 
-            print("Model not saved by that name/n-grams.")
+            logger.error("Model not saved by that name/n-grams.")
 
         with open(model_path, "rb") as f:  # "rb" because we want to read in binary mode
             markov_model_dict = pickle.load(f)
@@ -151,13 +163,16 @@ class MarkovModel:
         """
 
         model_path = os.path.join(
-            SRC_PATH, "models", "markov-models", model_name, "prod-model"
+            os.getcwd(), "models", "markov-models", "prod-models", model_name
         )
         prod_model_files = os.listdir(model_path)
-        if (not os.path.exists(model_path)) | (len(prod_model_files) == 0):
-            print("No production model by that name.")
+        logger.info(f"prod_model_files: {prod_model_files}")
+        if not os.path.exists(model_path) | (len(prod_model_files) == 0):
+            logger.error(
+                f"No production model by the name: {model_name}, models available: {prod_model_files}"
+            )
         elif len(prod_model_files) > 1:
-            print("More than one model in production folder")
+            logger.error("More than one model in production folder")
         else:
             for model_file in prod_model_files:
                 with open(
