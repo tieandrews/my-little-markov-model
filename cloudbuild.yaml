@@ -1,0 +1,24 @@
+steps:
+  # Install dependencies
+  - name: python
+    entrypoint: pip
+    args: ["install", "-r", "requirements.txt", "--user"]
+    # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_DOCKER_IMAGE_NAME}:$SHORT_SHA', '.'] 
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',  'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_DOCKER_IMAGE_NAME}:$SHORT_SHA']
+  # Deploy to Cloud Run, make sure cloudbuild service account has cloud run write permissions
+  - name: google/cloud-sdk
+    args: ['gcloud', 'beta', 'run', 'jobs', 'update', '${_CLOUD_RUN_NAME}', 
+           '--image=us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_DOCKER_IMAGE_NAME}:$SHORT_SHA', 
+           '--region', 'us-central1']
+          #  , '--platform', 'managed', 
+          #  '--allow-unauthenticated', '--port', '8080']
+substitutions:
+  _ARTIFACT_REGISTRY_REPO: 'markov-model-tweet'
+  _DOCKER_IMAGE_NAME: 'my-little-markov'
+  _CLOUD_RUN_NAME: 'markov-model-tweet'
+images:
+- 'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_DOCKER_IMAGE_NAME}:$SHORT_SHA'
