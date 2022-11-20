@@ -3,6 +3,54 @@ my-little-markov-model
 
 A Twitter bot that uses Markov models to generate new tweets based on different corpuses.
 
+## Requirements
+
+The requirements for package installation is encompassed in the `requirements.txt` for `pip` users and and `environment.yml` for Conda users.
+
+To set up the environment in Conda run:
+```
+conda env create -n complaints -f environment.yml
+```
+
+Or for `pip`:  
+```
+pip install -r requirements.txt
+```
+
+To update the `environment.yml` file you can run the following command if using a Conda environment:
+```
+conda env export > environment.yml
+```
+
+To output a pip formatted `requirements.txt` use the following command to generate one from a Conda environment:
+
+```
+pip list --format=freeze > requirements.txt
+```
+
+**If running on Windows must remove `pywin32==304` from `requirements.txt` before deployment.**
+
+## Local Development
+
+To build and run the application locally you can use the following make targets:
+
+```
+make docker-build
+make docker-run
+```
+
+## Deployment
+
+To deploy and update the running system ensure you have the Google Cloud CLI installed following these instructions: [Install the gcloud CLI](https://cloud.google.com/sdk/docs/install).
+
+You will need access to the `my-little-markov` GCP project.
+
+Then run the make target:
+
+```
+make deploy-prod
+```
+
 Project Organization
 ------------
 

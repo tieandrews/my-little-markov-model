@@ -1,5 +1,8 @@
 # markov-model pickled model weights
 *.pkl
+/models/markov-models/*
+!/models/markov-models/prod-models/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
