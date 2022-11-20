@@ -20,6 +20,25 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
+docker-build:
+#ok to fail removal if it doesn't exist
+	-docker rmi $$(docker images | grep 'markov-model')
+	docker build -t markov-model:dev .
+
+docker-run:
+	-docker container stop $$(docker images | grep 'markov-model')
+	-docker rm $$(docker images | grep 'markov-model')
+	echo Go to http://127.0.0.1:8080/ to connect to the API container.
+	docker container run --name markov-model --env-file=.env -e PORT=8080 -p 8080:8080 markov-model:dev
+
+deploy-dev:
+	gcloud config set project my-little-markov
+	gcloud builds submit --region=us-central1 --config cloudbuild.yaml --substitutions SHORT_SHA=dev
+
+deploy-prod:
+	gcloud config set project my-little-markov
+	gcloud builds submit --region=us-central1 --config cloudbuild.yaml --substitutions SHORT_SHA=prod	
+
 ## Install Python Dependencies
 requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
